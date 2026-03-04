@@ -1,43 +1,63 @@
 import mongoose from "mongoose";
 
 /*
-El Schema define la estructura de los documentos que se guardan en MongoDB.
-Es similar a definir las columnas de una tabla SQL.
+Variant Schema
+Representa una variante especifica del producto. Ej: Oro 18k talla 12
 */
-const productSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0, // evita precios negativos
-    },
-    description: {
-      type: String,
-      default: "",
-    },
-    image: {
-      type: String,
-      default: "",
-    },
-    stock: {
-      type: Number,
-      default: 0,
-    },
-    category: {
-      type: String,
-      default: "general",
-    },
+const variantSchema = new mongoose.Schema({
+  // SKU (Stock Keeping Unit) es, por definición, el identificador único de esa variante en el mundo real (y en mi lógica de negocio).
+  sku: {
+    type: String,
+    required: true,
+    unique: true
   },
-  {
-    timestamps: true,
+  // precio especifico de esta variante, en e-commerce reales cada variante puede tener un precio diferente.
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  // Stock independiente por variante. Ej: Oro 18k talla 12 -> 3 unidades
+  stock: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  // Atributos flexibles. Permite material, talla, color, etc.
+  attributes: {
+    material: String,
+    size: String,
+    color: String
   }
-)
+},
+{ _id: false })
 
+// Product Schema contiene la información general del producto
+
+const productSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    dafault: ""
+  },
+  /* Array de variantes.
+  Un producto puede tener múltiples variantes. */
+  variants: {
+    type: [variantSchema],
+    required: true
+  },
+  // Imágenes del producto
+  images: {
+    type: [String],
+    default: []
+  },
+}, {
+  timestamps: true
+})
 /*
 mongoose.model crea el modelo que usaremos para interactuar con la colección.
 Primer parámetro: nombre del modelo.
