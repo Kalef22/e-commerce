@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import productRoutes from "./modules/product/product.routes.js"
 
 export function createApp() {
   const app = express();
@@ -14,6 +15,9 @@ export function createApp() {
   app.get("/health", (_req, res) => {
     res.status(200).json({ok: true});
   });
+  
+  // Registro de rutas
+  app.use("/api/products", productRoutes)
 
   return app;
 }
@@ -22,3 +26,4 @@ export function createApp() {
   // Separar createApp() del servidor
   // Middleware antes de rutas
   // Endpoint health para monitoreo
+
