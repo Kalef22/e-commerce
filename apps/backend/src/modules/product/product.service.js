@@ -22,10 +22,26 @@ export async function getProducts() {
   return products;
 }
 
-//obtener un producto por ID
+// Obtener un producto por ID
 export async function getProductById(id) {
   // findById busca un documento usando el _id de MongoDB
   const product = await Product.findById(id).lean();
+  return product;
+}
+
+// Actualizar producto por ID
+export async function updateProduct(id, data) {
+  /*
+  findByIdAndUpdate:
+  1. busca el documento por _id
+  2. aplica los cambios
+  3. devuelve el documento actualizado
+  */
+  const product = await Product.findByIdAndUpdate(id, data, {
+    new: true,  // devuelve el documento actualizado, sin esto MongoDB devolvería el documento antiguo.
+    runValidators: true   // ejecuta las validaciones del schema
+  }).lean();
+
   return product;
 }
 

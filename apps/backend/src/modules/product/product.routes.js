@@ -1,5 +1,5 @@
 import express from "express";
-import { create, getAll, getById } from "./product.controller.js";
+import { create, getAll, getById, update } from "./product.controller.js";
 
 const router = express.Router();
 
@@ -14,6 +14,9 @@ router.get("/", getAll);
 
 // GET /api/product/:id
 router.get("/:id", getById);
+
+// Actualizar producto
+router.patch("/:id", update)
 
 export default router;
 
