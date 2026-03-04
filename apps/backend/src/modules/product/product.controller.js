@@ -1,4 +1,4 @@
-import { createProduct } from "./product.service.js";
+import { createProduct, getProducts } from "./product.service.js";
 
 // Controller se encarga de manejar la request HTTP
 
@@ -12,4 +12,16 @@ export async function create(req, res, next) {
 		// next envía el error al middleware global
 		next(error);
 	}
+}
+
+// GET /products
+// Lista todos los productos
+
+export async function getAll(_req, res, next) {
+  try {
+    const products = await getProducts();
+    res.status(200).json(products)
+  } catch (error) {
+    next(error);
+  }
 }

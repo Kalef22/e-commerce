@@ -20,6 +20,12 @@ export async function createProduct(data) {
 	return product;
 }
 
+export async function getProducts() {
+  // find() devuelve todos los documentos de la colección
+  const products = await Product.find().lean(); // lean() devuelve solo el dato objetos JSON normales, es más rápido, consume menos memoria.
+  return products;
+}
+
 // El service:
 // contiene la lógica de negocio
 // mantiene el controller limpio

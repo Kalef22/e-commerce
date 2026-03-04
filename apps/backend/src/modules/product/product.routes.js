@@ -1,13 +1,16 @@
 import express from "express";
-import { create } from "./product.controller.js";
+import { create, getAll } from "./product.controller.js";
 
 const router = express.Router();
-/*
-POST /api/products
-crear producto
-*/
+
+// POST /api/products
+// crear producto
 
 router.post("/", create);
+
+// GET /api/products
+// Listar productos
+router.get("/", getAll);
 
 export default router;
 

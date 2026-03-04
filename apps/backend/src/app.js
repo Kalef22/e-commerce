@@ -18,7 +18,7 @@ export function createApp() {
   
   // Registro de rutas
   app.use("/api/products", productRoutes)
-
+  
   return app;
 }
 
