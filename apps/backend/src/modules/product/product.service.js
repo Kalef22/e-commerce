@@ -45,6 +45,13 @@ export async function updateProduct(id, data) {
   return product;
 }
 
+// Eliminar producto por ID
+export async function deleteProduct(id) {
+  // devuelve el producto eliminado o null si no existe.
+  const product = await Product.findByIdAndDelete(id);
+  return product;
+}
+
 // El service:
 // contiene la lógica de negocio
 // mantiene el controller limpio

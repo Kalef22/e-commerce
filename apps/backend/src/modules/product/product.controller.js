@@ -3,6 +3,7 @@ import {
 	getProducts,
 	getProductById,
   updateProduct,
+  deleteProduct,
 } from "./product.service.js";
 
 // Controller se encarga de manejar la request HTTP
@@ -62,6 +63,26 @@ export async function update(req, res, next) {
     }
     
     res.status(200).json(product);
+  } catch (error) {
+    next(error);
+  }
+}
+
+// DELETE /product/:id
+export async function remove(req, res, next) {
+  try {
+    const { id } = req.params;
+    const product = await deleteProduct(id);
+    // si el producto no existe
+    if(!product) {
+      return res.status(404).json({
+        message: "Producto no encontrado"
+      });
+    }
+
+    res.status(200).json({
+      message: "Producto borrado"
+    })
   } catch (error) {
     next(error);
   }
