@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import productRoutes from "./modules/product/product.routes.js"
+import { errorHandler } from "./middleware/error.middleware.js"
 
 export function createApp() {
   const app = express();
@@ -18,7 +19,10 @@ export function createApp() {
   
   // Registro de rutas
   app.use("/api/products", productRoutes)
-  
+
+  // SIEMPRE AL FINAL, despues de routes
+  app.use(errorHandler);
+
   return app;
 }
 
@@ -27,3 +31,5 @@ export function createApp() {
   // Middleware antes de rutas
   // Endpoint health para monitoreo
 
+// Usamos next(error) en los controllers (para que llegue al handler), 
+// el cual buscara al primer middleware de errores que encuentre despues de su endpoint
