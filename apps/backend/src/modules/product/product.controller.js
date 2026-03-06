@@ -1,10 +1,44 @@
-import {
-  createProduct,
-  getProducts,
-  getProductById,
-  updateProduct,
-  deleteProduct,
-} from "./product.service.js";
+import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, } from "./product.service.js";
+import { Product } from "./product.model.js";
+
+// Sube una imagen y la asocia a un producto.
+// Espera:
+// - req.params.id -> id del producto
+// - req.file -> archivo subido por multer
+export async function uploadImage(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    if(!req.file) {
+      return res.status(400).json({
+        message: "No se ha enviado ninguna imagen",
+      })
+    }
+
+    const product = await Product.findById(id);
+
+    if(!product) {
+      return res.status(404).json({
+        message: "Producto no encontrado",
+      })
+    }
+
+    // Construimos la URL pública relativa
+    // Ejemplo: /uploads/products/171000-anillo.jpg
+    const imageUrl = `/uploads/products/${req.file.filename}`;
+
+    product.images.push(imageUrl);
+    await product.save();
+
+    res.status(200).json({
+      message: "Imagen subida correctamente",
+      imageUrl,
+      product,
+    })
+  } catch (error) {
+    next(error);
+  }
+}
 
 // Controller = capa HTTP
 // Se encarga de recibir req, devolver res y pasar errores con next()
@@ -25,9 +59,9 @@ export async function create(req, res, next) {
 // GET /products
 export async function getAll(req, res, next) {
   try {
-    const { page, limit, search } = req.query;
+    const { page, limit, search, material } = req.query;
 
-    const result = await getProducts({ page, limit, search});
+    const result = await getProducts({ page, limit, search, material });
 
     res.json(result);
   } catch (error) {

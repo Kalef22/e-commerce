@@ -4,7 +4,7 @@ import fs from "node:fs"; // herramienta nativa de Node.js que permite interactu
 
 // Ruta absoluta donde se guardarán las imágenes
 // Buena práctica: asegurarnos de que la carpeta exista.
-const uploadDir = path.resolver("uploads/products");
+const uploadDir = path.resolve("uploads/products");
 
 if(!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true});
