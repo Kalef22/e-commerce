@@ -1,24 +1,38 @@
 import express from "express";
+import { z } from "zod";
+
+import { validate } from "../../middlewares/validate.middleware.js"
+import {
+  createProductBodySchema,
+  updateProductBodySchema,
+  objectIdSchema,
+} from "./product.schema.js";
+
 import { create, getAll, getById, update, remove } from "./product.controller.js";
 
 const router = express.Router();
 
-// POST /api/products
-// crear producto
-router.post("/", create);
+// helper para params
+const paramsIdSchema = z.object({ id: objectIdSchema });
 
 // GET /api/products
-// Listar productos
 router.get("/", getAll);
 
-// GET /api/product/:id
-router.get("/:id", getById);
+// GET /api/products/:id
+router.get("/:id", validate({ params: paramsIdSchema }), getById);
 
-// Actualizar producto
-router.patch("/:id", update)
+// POST /api/products
+router.post("/", validate({ body: createProductBodySchema }), create);
 
-// DELETE /api/product/:id
-router.delete("/:id", remove)
+// PATCH /api/products/:id
+router.patch(
+  "/:id",
+  validate({ params: paramsIdSchema, body: updateProductBodySchema }),
+  update
+);
+
+// DELETE /api/products/:id
+router.delete("/:id", validate({ params: paramsIdSchema }), remove);
 
 export default router;
 

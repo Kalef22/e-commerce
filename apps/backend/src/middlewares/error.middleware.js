@@ -16,7 +16,10 @@ export function errorHandler(err, _req, res, _next) {
       console.log("Error Inesperado: ", err);
     }
 
-    res.status(statusCode).json({ message });
+    res.status(statusCode).json({ 
+      message: err.message || "Error interno del servidor",
+      details: err.details, // <- importante para errores de validación
+    });
 }
 
 // Manejamos la clase de Error personaizado 
