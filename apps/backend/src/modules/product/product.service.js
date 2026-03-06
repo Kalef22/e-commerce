@@ -17,8 +17,7 @@ export async function createProduct(data) {
 }
 
 // Obtener productos con paginación y búsqueda
-
-export async function getProducts({ page= 1, limit = 10, search}) {
+export async function getProducts({ page= 1, limit = 10, search, material}) {
   
   // Convertimos page y limit a número
   const pageNumber = Number(page);
@@ -35,9 +34,15 @@ export async function getProducts({ page= 1, limit = 10, search}) {
     };
   }
 
-  const skip = (pageNumber - 1) * limitNumber;
+  // filtro por material
+  if(material) {
+    query["variants.attributes.material"] = material;
+  }
 
-  const products = await Product.find(query).skip(skip).limit(limitNumber);
+  const skip = (pageNumber - 1) * limitNumber;
+  
+  // lean() mejora el rendimiento, Esto devuelve objetos JSON planos, que consumen menos memoria.
+  const products = await Product.find(query).skip(skip).limit(limitNumber).lean(); 
 
   const total = await Product.countDocuments(query);
   
