@@ -1,77 +1,132 @@
 import mongoose from "mongoose";
 
 /*
-Variant Schema
-Representa una variante especifica del producto. Ej: Oro 18k talla 12
+Image Schema
+Representa una imagen del producto.
+Buena práctica:
+- Guardar objetos y no solo strings para poder añadir metadatos como alt.
 */
-const variantSchema = new mongoose.Schema(
-	{
-		// SKU (Stock Keeping Unit) es, por definición, el identificador único de esa variante en el mundo real (y en mi lógica de negocio).
-		sku: {
-			type: String,
-			required: true,
-			unique: true,
-		},
-		// precio especifico de esta variante, en e-commerce reales cada variante puede tener un precio diferente.
-		price: {
-			type: Number,
-			required: true,
-			min: 0,
-		},
-		// Stock independiente por variante. Ej: Oro 18k talla 12 -> 3 unidades
-		stock: {
-			type: Number,
-			required: true,
-			default: 0,
-		},
-		// Atributos flexibles. Permite material, talla, color, etc.
-		attributes: {
-			material: String,
-			size: String,
-			color: String,
-		},
-	},
-	{ _id: false },
+const imageSchema = new mongoose.Schema(
+  {
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    alt: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+  },
+  { _id: false }
 );
 
-// Product Schema contiene la información general del producto
+/*
+Variant Schema
+Representa una variante específica del producto.
+Ej: Oro 18k, talla 12
+*/
+const variantSchema = new mongoose.Schema(
+  {
+    // SKU único de la variante
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
 
+    // Precio específico de la variante
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    // Stock independiente por variante
+    stock: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+
+    // Atributos flexibles para variantes
+    attributes: {
+      material: {
+        type: String,
+        trim: true,
+      },
+      size: {
+        type: String,
+        trim: true,
+      },
+      color: {
+        type: String,
+        trim: true,
+      },
+    },
+  },
+  { _id: false }
+);
+
+/*
+Product Schema
+Contiene la información general del producto
+*/
 const productSchema = new mongoose.Schema(
-	{
-		name: {
-			type: String,
-			required: true,
-			trim: true,
-		},
-		description: {
-			type: String,
-			dafault: "",
-		},
-		// Array de variantes. Un producto puede tener múltiples variantes.
-		variants: {
-			type: [variantSchema],
-			required: true,
-		},
-		// Imágenes del producto
-		images: {
-			type: [String],
-			default: [],
-		},
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+    },
+
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // Imagen principal para listados / catálogo
     mainImage: {
       type: String,
-      default: null
+      default: null,
+      trim: true,
     },
-	},
-	{
-		timestamps: true,
+
+    // Galería de imágenes del producto
+    images: {
+      type: [imageSchema],
+      default: [],
+    },
+
+    // Array de variantes
+    variants: {
+      type: [variantSchema],
+      required: true,
+      validate: {
+        validator: function (value) {
+          // Buena práctica:
+          // un producto debería tener al menos una variante
+          return Array.isArray(value) && value.length > 0;
+        },
+        message: "El producto debe tener al menos una variante",
+      },
+    },
+  },
+  {
+    timestamps: true,
     toJSON: {
       transform(doc, ret) {
-        ret.id = ret._id;
+        ret.id = ret._id.toString();
         delete ret._id;
         delete ret.__v;
-      }
-    }
-	},
+      },
+    },
+  }
 );
 /*
 mongoose.model crea el modelo que usaremos para interactuar con la colección.
