@@ -2,7 +2,7 @@ import express from "express";
 import { z } from "zod";
 import { validate } from "../../middlewares/validate.middleware.js"
 import { createProductBodySchema, updateProductBodySchema, objectIdSchema, } from "./product.schema.js";
-import { create, getAll, getById, update, remove, uploadImage } from "./product.controller.js";
+import { create, getAll, getById, update, remove, uploadImage, updateMainImage } from "./product.controller.js";
 import { uploadProductImage } from "../../middlewares/upload.middleware.js";
 
 const router = express.Router();
@@ -31,6 +31,9 @@ router.delete("/:id", validate({ params: paramsIdSchema }), remove);
 
 // Subir imagen a un producto
 router.post("/:id/images", uploadProductImage.single("image"), uploadImage);
+
+// Actualizar imagen principal
+router.patch("/:id/main-image", updateMainImage);
 
 export default router;
 

@@ -1,4 +1,5 @@
 import { Product } from "./product.model.js";
+import { AppError } from "../../utils/AppError.js"
 /*
 Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
@@ -40,7 +41,7 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
   }
 
   const skip = (pageNumber - 1) * limitNumber;
-  
+
   // lean() mejora el rendimiento, Esto devuelve objetos JSON planos, que consumen menos memoria.
   const products = await Product.find(query).skip(skip).limit(limitNumber).lean(); 
 
@@ -82,6 +83,32 @@ export async function updateProduct(id, data) {
 export async function deleteProduct(id) {
   // devuelve el producto eliminado o null si no existe.
   const product = await Product.findByIdAndDelete(id);
+  return product;
+}
+
+// Actualizar imagen principal
+export async function updateProductMainImage(id, mainImage) {
+  // Buscamos el producto por id
+  const product = await Product.findById(id);
+
+  // Si no existe, devolvemos null para que el controller responda 404
+  if(!product) {
+    return null;
+  }
+
+  // Validamos que la imagen exista dentro del array images
+  const imageExists = product.images.includes(mainImage);
+
+  // Si la imágen no pertenece al producto, lanzamos error de negocio
+  if(!imageExists) {
+    throw new AppError("La imagen indicada no existe en este producto", 400);
+  }
+
+  // Actualizamos la imagen principal
+  product.mainImage = mainImage;
+
+  await product.save();
+
   return product;
 }
 

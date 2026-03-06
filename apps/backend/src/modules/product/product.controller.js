@@ -1,4 +1,10 @@
-import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, } from "./product.service.js";
+import { createProduct, 
+        getProducts, 
+        getProductById, 
+        updateProduct, 
+        deleteProduct, 
+        updateProductMainImage,
+      } from "./product.service.js";
 import { Product } from "./product.model.js";
 
 // Sube una imagen y la asocia a un producto.
@@ -133,6 +139,37 @@ export async function remove(req, res, next) {
     res.status(200).json({
       message: "Producto borrado",
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// PATCH /products/:id/main-image
+export async function updateMainImage(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { mainImage } = req.body;
+
+    // Validación básica del body
+    if(!mainImage) {
+      return res.status(400).json({
+        message: "El campo mainImage es obligatorio",
+      });
+    }
+
+    const product = await updateProductMainImage(id, mainImage);
+
+    // Si el producto no existe, devolvemos 404
+    if(!product) {
+      return res.status(404).json({
+        message: "Producto no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      message: "Imagen principal actualizada correctamente",
+      product,
+    })
   } catch (error) {
     next(error);
   }
