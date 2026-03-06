@@ -28,6 +28,11 @@ export async function uploadImage(req, res, next) {
     const imageUrl = `/uploads/products/${req.file.filename}`;
 
     product.images.push(imageUrl);
+
+    // Si no hay una imágen principal asignaremos la primera
+    if(!product.mainImage) {
+      product.mainImage = imageUrl;
+    }
     await product.save();
 
     res.status(200).json({
