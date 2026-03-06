@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-import productRoutes from "./modules/product/product.routes.js"
-import { errorHandler } from "./middlewares/error.middleware.js"
+import productRoutes from "./modules/product/product.routes.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
+import path from "node:path";
 
 export function createApp() {
   const app = express();
@@ -11,6 +12,9 @@ export function createApp() {
 
   // Permite recibir JSON en las peticiones
   app.use(express.json());
+
+  // Exponemos la carpeta uploads para que el navegador pueda acceder a las imágenes
+  app.use("/uploads", express.static(path.resolve("uploads")));
 
   // Endpoint de salud del servidor
   app.get("/health", (_req, res) => {
