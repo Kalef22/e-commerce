@@ -23,15 +23,17 @@ export async function create(req, res, next) {
 }
 
 // GET /products
-export async function getAll(_req, res, next) {
+export async function getAll(req, res, next) {
   try {
-    const products = await getProducts();
+    const { page, limit, search } = req.query;
 
-    res.status(200).json(products);
+    const result = await getProducts({ page, limit, search});
+
+    res.json(result);
   } catch (error) {
     next(error);
   }
-}
+} 
 
 // GET /products/:id
 export async function getById(req, res, next) {

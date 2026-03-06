@@ -16,11 +16,39 @@ export async function createProduct(data) {
 	return product;
 }
 
-export async function getProducts() {
-  // find() devuelve todos los documentos de la colección
-  const products = await Product.find().lean(); // lean() devuelve solo el dato objetos JSON normales, es más rápido, consume menos memoria.
-  return products;
-}
+// Obtener productos con paginación y búsqueda
+
+export async function getProducts({ page= 1, limit = 10, search}) {
+  
+  // Convertimos page y limit a número
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+
+  // query es el filtro que MongoDB usará
+  const query = {};
+
+  // Si existe búsqueda
+  if(search) {
+    query.name = {
+      $regex: search,
+      $options: "i" // búsqueda sin importar mayúsculas
+    };
+  }
+
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const products = await Product.find(query).skip(skip).limit(limitNumber);
+
+  const total = await Product.countDocuments(query);
+  
+  // lean() devuelve solo el dato objetos JSON normales, es más rápido, consume menos memoria.
+  return {
+    products,
+    page: pageNumber,
+    totalPages: Math.ceil(total / limitNumber),
+    total
+  };
+} // despues modificamos el controller
 
 // Obtener un producto por ID
 export async function getProductById(id) {
