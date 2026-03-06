@@ -42,14 +42,15 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
 
   const skip = (pageNumber - 1) * limitNumber;
 
-  // lean() mejora el rendimiento, Esto devuelve objetos JSON planos, que consumen menos memoria.
-  const products = await Product.find(query).skip(skip).limit(limitNumber).lean(); 
+  // lean() mejora el rendimiento, Esto devuelve objetos JSON planos, que consumen menos memoria, en este caso no se usara porque salta las opciones del schema
+  const products = await Product.find(query).skip(skip).limit(limitNumber);
+  const cleanedProducts = products.map(p => p.toJSON());
 
   const total = await Product.countDocuments(query);
   
   // lean() devuelve solo el dato objetos JSON normales, es más rápido, consume menos memoria.
   return {
-    products,
+    products: cleanedProducts,
     page: pageNumber,
     totalPages: Math.ceil(total / limitNumber),
     total

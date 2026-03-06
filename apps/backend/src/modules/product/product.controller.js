@@ -161,7 +161,7 @@ export async function updateMainImage(req, res, next) {
 
     // Si el producto no existe, devolvemos 404
     if(!product) {
-      return res.status(404).json({
+      return res.status(404).json({ // json(), Mongoose convierte el documento a JSON y ejecuta esa función que hemos agregado en el schema
         message: "Producto no encontrado",
       });
     }
