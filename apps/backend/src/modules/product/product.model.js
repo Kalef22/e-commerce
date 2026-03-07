@@ -84,7 +84,7 @@ const productSchema = new mongoose.Schema(
       minlength: 2,
     },
 
-    slug: {
+    slug: { // no se mete en el zod, porque esto no debe venir del cliente
       type: String,
       required: true,
       unique: true,
@@ -110,7 +110,15 @@ const productSchema = new mongoose.Schema(
       type: [imageSchema],
       default: [],
     },
-    basePrice: {
+
+    basePrice: {  // no se mete en el zod, porque esto no debe venir del cliente
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+
+    totalStock: {
       type: Number,
       required: true,
       min: 0,
