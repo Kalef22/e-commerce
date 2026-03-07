@@ -73,9 +73,15 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
 
   const skip = (pageNumber - 1) * limitNumber;
 
-  // lean() mejora el rendimiento, Esto devuelve objetos JSON planos, que consumen menos memoria, en este caso no se usara porque salta las opciones del schema
-  const products = await Product.find(query).skip(skip).limit(limitNumber);
-  const cleanedProducts = products.map(p => p.toJSON());
+  // Proyección:
+  // solo devolvemos los campos que el catálogo necesita
+  const products = await Product.find(query)
+    .select("name slug mainImage basePrice totalStock")
+    .skip(skip).limit(limitNumber);
+
+  // toJSON aplica la transformación del schema:
+  // _id -> id y elimina __v
+  const cleanedProducts = products.map(product => product.toJSON());
 
   const total = await Product.countDocuments(query);
   
@@ -87,6 +93,9 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
     total
   };
 } // despues modificamos el controller
+
+// GET /products → resumen
+// GET /products/:id o GET /products/slug/:slug → detalle completo
 
 // Obtener un producto por ID
 export async function getProductById(id) {
