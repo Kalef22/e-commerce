@@ -1,5 +1,6 @@
 import { Product } from "./product.model.js";
 import { AppError } from "../../utils/AppError.js"
+import { toProductCardDTO,  toProductDetailDTO } from "./product.dto.js";
 /*
 Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
@@ -73,21 +74,23 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
 
   const skip = (pageNumber - 1) * limitNumber;
 
-  // Proyección:
-  // solo devolvemos los campos que el catálogo necesita
+  // Proyección: solo devolvemos los campos que el catálogo necesita
   const products = await Product.find(query)
     .select("name slug mainImage basePrice totalStock")
-    .skip(skip).limit(limitNumber);
+    .skip(skip)
+    .limit(limitNumber);
 
   // toJSON aplica la transformación del schema:
   // _id -> id y elimina __v
   const cleanedProducts = products.map(product => product.toJSON());
 
+  const productCards = cleanedProducts.map(toProductCardDTO);
+
   const total = await Product.countDocuments(query);
   
   // lean() devuelve solo el dato objetos JSON normales, es más rápido, consume menos memoria.
   return {
-    products: cleanedProducts,
+    products: productCards,
     page: pageNumber,
     totalPages: Math.ceil(total / limitNumber),
     total
@@ -99,9 +102,13 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
 
 // Obtener un producto por ID
 export async function getProductById(id) {
-  // findById busca un documento usando el _id de MongoDB
   const product = await Product.findById(id);
-  return product;
+
+  if (!product) {
+    throw new AppError("Producto no encontrado", 404);
+  }
+
+  return toProductDetailDTO(product.toJSON());
 }
 
 // Actualizar producto por ID
