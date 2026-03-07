@@ -5,6 +5,7 @@ Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
 Aquí ocurre la creación real del producto.
 */
+// funcion que calcular el precio base
 function calculateBasePrice(variants) {
   const prices = variants.map((variant) => variant.price);
   return Math.min(...prices);
