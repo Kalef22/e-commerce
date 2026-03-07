@@ -1,35 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import MainLayout from "./components/layout/MainLayout";
+import HomePage from "./pages/HomePage";
 
-function App() {
-  const [count, setCount] = useState(0)
+// App es el punto de entrada de la aplicación React.
+// Aquí conectamos el layout principal con las páginas.
+// Aqui se añadira el router
 
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <MainLayout>
+      <HomePage/>
+    </MainLayout>
+  );
 }
-
-export default App

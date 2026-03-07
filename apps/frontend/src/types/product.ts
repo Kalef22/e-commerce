@@ -12,19 +12,18 @@ export type ProductVariant = {
 export type Product = {
   id: string;
   name: string;
-  description: string;
-  images?: string[];
-  variants: ProductVariant[];
-  createdAt?: string;
+  slug: string;
+  mainImage: string;
+  basePrice: number;
+  totalStock: number;
+  inStock: boolean;
 };
 
 export type ProductsResponse = {
-  data: Product[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  products: Product[];
+  page: number;
+  totalPages: number;
+  total: number;
 };
 
 // El frontend debe tener claro qué forma tiene la respuesta del backend.
