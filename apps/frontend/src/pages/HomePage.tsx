@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
+import ProductCard from "../components/product/ProductCard"
 import { getProducts } from "../services/product.service";
 import type { Product } from "../types/product";
 
-/*
-HomePage:
-- carga los productos desde el backend
-- muestra loading
-- muestra error
-- renderiza la lista
-*/
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +12,6 @@ export default function HomePage() {
     async function loadProducts() {
       try {
         const response = await getProducts();
-
-        // El backend devuelve { products: [...] }
         setProducts(response.products);
       } catch (err) {
         setError("Hubo un problema al cargar los productos");
@@ -49,27 +41,7 @@ export default function HomePage() {
       ) : (
         <div className="product-grid">
           {products.map((product) => (
-            <article key={product.id} className="product-card">
-              <div className="product-image-placeholder">
-                {product.mainImage ? (
-                  <img
-                    src={product.mainImage}
-                    alt={product.name}
-                    className="product-image"
-                  />
-                ) : (
-                  <span>Sin imagen</span>
-                )}
-              </div>
-
-              <h3>{product.name}</h3>
-
-              <p className="product-price">
-                Desde €{product.basePrice.toFixed(2)}
-              </p>
-
-              <p>{product.inStock ? "Disponible" : "Agotado"}</p>
-            </article>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
