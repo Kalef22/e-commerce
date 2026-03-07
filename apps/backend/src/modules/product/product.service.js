@@ -5,6 +5,11 @@ Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
 Aquí ocurre la creación real del producto.
 */
+function calculateTotalStock(variants) {
+  // Sumamos el stock de todas las variantes
+  return variants.reduce((total, variant) => total + variant.stock, 0);
+}
+
 function generateSlug(text) {
   return text
     .toLowerCase() // convierte a minúsculas
@@ -27,13 +32,16 @@ export async function createProduct(data) {
   if (!data.variants || data.variants.length === 0) {
     throw new AppError("El producto debe contener al menos una variante", 400);
   }
-  // calculamos el precio base, sacamos el minimo de las variantes
+
+  // Calculamos datos derivados a partir de las variantes y el nombre
   const basePrice = calculateBasePrice(data.variants);
+  const totalStock = calculateTotalStock(data.variants);
   const slug = generateSlug(data.name);
 
   const product = await Product.create({
     ...data,
     basePrice,
+    totalStock,
     slug,
   });
 
@@ -44,8 +52,8 @@ export async function createProduct(data) {
 export async function getProducts({ page= 1, limit = 10, search, material}) {
   
   // Convertimos page y limit a número
-  const pageNumber = Number(page);
-  const limitNumber = Number(limit);
+  const pageNumber = Math.max(1, Number(page) || 1);
+  const limitNumber = Math.max(1, Number(limit) || 10);
 
   // query es el filtro que MongoDB usará
   const query = {};
@@ -83,19 +91,20 @@ export async function getProducts({ page= 1, limit = 10, search, material}) {
 // Obtener un producto por ID
 export async function getProductById(id) {
   // findById busca un documento usando el _id de MongoDB
-  const product = await Product.findById(id).lean();
+  const product = await Product.findById(id);
   return product;
 }
 
 // Actualizar producto por ID
 export async function updateProduct(id, data) {
-  // Si el update incluye variants, las validamos y recalculamos basePrice
+  // Si el update incluye variants, las validamos y recalculamos datos derivados
   if (data.variants) {
     if (!Array.isArray(data.variants) || data.variants.length === 0) {
       throw new AppError("El producto debe contener al menos una variante", 400);
     }
 
     data.basePrice = calculateBasePrice(data.variants);
+    data.totalStock = calculateTotalStock(data.variants);
   }
 
   // Si el nombre cambia, regeneramos el slug
@@ -106,7 +115,7 @@ export async function updateProduct(id, data) {
   const updatedProduct = await Product.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
-  }).lean();
+  });
 
   if (!updatedProduct) {
     throw new AppError("Producto no encontrado", 404);
