@@ -5,16 +5,27 @@ Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
 Aquí ocurre la creación real del producto.
 */
+function calculateBasePrice(variants) {
+  const prices = variants.map((variant) => variant.price);
+  return Math.min(...prices);
+}
 
 export async function createProduct(data) {
   // Validación básica profesional
   // Un producto debe tener al menos una variante
 	if (!data.variants || data.variants.length === 0) {
-		throw new Error("El producto debe contener al menos una variante");
+		throw new AppError("El producto debe contener al menos una variante", 400);
 	}
+	// Calculamos el precio base usando el precio más bajo de las variantes
+  const basePrice = calculateBasePrice(data.variants);
+  
 	// Creamos el producto en MongoDB
-	const product = await Product.create(data);
-	return product;
+  const product = await Product.create({
+    ...data,
+    basePrice,
+  });
+
+  return product;
 }
 
 // Obtener productos con paginación y búsqueda
@@ -66,18 +77,25 @@ export async function getProductById(id) {
 
 // Actualizar producto por ID
 export async function updateProduct(id, data) {
-  /*
-  findByIdAndUpdate:
-  1. busca el documento por _id
-  2. aplica los cambios
-  3. devuelve el documento actualizado
-  */
-  const product = await Product.findByIdAndUpdate(id, data, {
-    new: true,  // devuelve el documento actualizado, sin esto MongoDB devolvería el documento antiguo.
-    runValidators: true   // ejecuta las validaciones del schema
+  // Si el update incluye variants, las validamos y recalculamos basePrice
+  if (data.variants) {
+    if (!Array.isArray(data.variants) || data.variants.length === 0) {
+      throw new AppError("El producto debe contener al menos una variante", 400);
+    }
+
+    data.basePrice = calculateBasePrice(data.variants);
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
   }).lean();
 
-  return product;
+  if (!updatedProduct) {
+    throw new AppError("Producto no encontrado", 404);
+  }
+
+  return updatedProduct;
 }
 
 // Eliminar producto por ID

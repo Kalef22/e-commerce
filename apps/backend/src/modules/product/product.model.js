@@ -102,6 +102,12 @@ const productSchema = new mongoose.Schema(
       type: [imageSchema],
       default: [],
     },
+    basePrice: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
 
     // Array de variantes
     variants: {

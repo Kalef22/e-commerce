@@ -35,15 +35,29 @@ export const variantSchema = z.object({
   attributes: attributesSchema,
 });
 
-// Product: requiere name y variants; description/images opcionales con defaults
+
+const imageSchema = z.object({
+  url: z.string().url("La URL de la imagen no es válida"),
+  alt: z.string().trim().optional(),
+});
+
 export const createProductBodySchema = z.object({
   name: z.string().trim().min(2, "name debe tener al menos 2 caracteres"),
-  // Nota: en tu mongoose schema tienes un typo "dafault". De momento validamos aquí.
+
   description: z.string().trim().optional(),
+
+  mainImage: z
+    .string()
+    .trim()
+    .url("mainImage debe ser una URL válida")
+    .nullable()
+    .optional(),
+
   variants: z
     .array(variantSchema)
     .min(1, "El producto debe contener al menos una variante"),
-  images: z.array(z.string().url("Cada imagen debe ser una URL válida")).optional(),
+
+  images: z.array(imageSchema).optional(),
 });
 
 // Para PATCH (actualización parcial)
