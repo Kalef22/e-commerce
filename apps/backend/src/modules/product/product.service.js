@@ -5,6 +5,17 @@ Sevice encargado de la lógica de negocio
 El controlador solo recibe la request.
 Aquí ocurre la creación real del producto.
 */
+function generateSlug(text) {
+  return text
+    .toLowerCase() // convierte a minúsculas
+    .trim() // elimina espacios al inicio y final
+    .normalize("NFD") // separa letras de acentos: á -> a + acento
+    .replace(/[\u0300-\u036f]/g, "") // elimina los acentos
+    .replace(/[^a-z0-9\s-]/g, "") // elimina caracteres raros
+    .replace(/\s+/g, "-") // cambia espacios por guiones
+    .replace(/-+/g, "-"); // evita guiones duplicados
+}
+
 // funcion que calcular el precio base
 function calculateBasePrice(variants) {
   const prices = variants.map((variant) => variant.price);
@@ -12,18 +23,18 @@ function calculateBasePrice(variants) {
 }
 
 export async function createProduct(data) {
-  // Validación básica profesional
   // Un producto debe tener al menos una variante
-	if (!data.variants || data.variants.length === 0) {
-		throw new AppError("El producto debe contener al menos una variante", 400);
-	}
-	// Calculamos el precio base usando el precio más bajo de las variantes
+  if (!data.variants || data.variants.length === 0) {
+    throw new AppError("El producto debe contener al menos una variante", 400);
+  }
+  // calculamos el precio base, sacamos el minimo de las variantes
   const basePrice = calculateBasePrice(data.variants);
-  
-	// Creamos el producto en MongoDB
+  const slug = generateSlug(data.name);
+
   const product = await Product.create({
     ...data,
     basePrice,
+    slug,
   });
 
   return product;
@@ -85,6 +96,11 @@ export async function updateProduct(id, data) {
     }
 
     data.basePrice = calculateBasePrice(data.variants);
+  }
+
+  // Si el nombre cambia, regeneramos el slug
+  if (data.name) {
+    data.slug = generateSlug(data.name);
   }
 
   const updatedProduct = await Product.findByIdAndUpdate(id, data, {

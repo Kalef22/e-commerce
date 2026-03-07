@@ -84,6 +84,14 @@ const productSchema = new mongoose.Schema(
       minlength: 2,
     },
 
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+
     description: {
       type: String,
       default: "",
