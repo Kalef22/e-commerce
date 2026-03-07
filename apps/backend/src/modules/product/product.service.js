@@ -99,7 +99,7 @@ export async function updateProduct(id, data) {
   }
 
   // Si el nombre cambia, regeneramos el slug
-  if (data.name) {
+  if (data.name !== undefined) {
     data.slug = generateSlug(data.name);
   }
 
