@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { Product } from "../types/product";
 
 type ProductCardProps = {
@@ -6,28 +7,36 @@ type ProductCardProps = {
 
 export default function ProductCard({ product }: ProductCardProps) {
 	return (
-		<article className="product-card">
-			<div className="product-image-placeholder">
-				{product.mainImage ? (
-					<img
-						src={product.mainImage}
-						alt={product.name}
-						className="product-image"
-						onError={(e) => {
-							e.currentTarget.style.display = "none";
-						}}
-					/>
-				) : (
-					<span>Sin imagen</span>
-				)}
-			</div>
+		<Link to={`/products/${product.slug}`} className="product-link">
+			
+			<article className="product-card">
 
-			<h3>{product.name}</h3>
+				<div className="product-image-placeholder">
+					{product.mainImage ? (
+						<img
+							src={product.mainImage}
+							alt={product.name}
+							className="product-image"
+							onError={(e) => {
+								e.currentTarget.style.display = "none";
+							}}
+						/>
+					) : (
+						<span>Sin imagen</span>
+					)}
+				</div>
 
-			<p className="product-price">Desde €{product.basePrice.toFixed(2)}</p>
+				<h3>{product.name}</h3>
 
-			<p>{product.inStock ? "Disponible" : "Agotado"}</p>
-		</article>
+				<p className="product-price">
+					Desde €{product.basePrice.toFixed(2)}
+				</p>
+
+				<p>{product.inStock ? "Disponible" : "Agotado"}</p>
+
+			</article>
+
+		</Link>
 	);
 }
 
