@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
 import type { Product } from "../types/product";
+import { Link } from "react-router-dom"; 
+// Link permite navegar entre páginas sin recargar el navegador
 
 type ProductCardProps = {
 	product: Product;
@@ -7,9 +8,12 @@ type ProductCardProps = {
 
 export default function ProductCard({ product }: ProductCardProps) {
 	return (
-		<Link to={`/products/${product.slug}`} className="product-link">
-			
-			<article className="product-card">
+
+		// Link convierte toda la tarjeta en un enlace
+		// product.slug se usa para generar la URL dinámica
+		<Link to={`/products/${product.slug}`} className="product-card">
+
+			<article>
 
 				<div className="product-image-placeholder">
 					{product.mainImage ? (
@@ -17,6 +21,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 							src={product.mainImage}
 							alt={product.name}
 							className="product-image"
+
+							// Si la imagen falla, la ocultamos
 							onError={(e) => {
 								e.currentTarget.style.display = "none";
 							}}
@@ -39,5 +45,4 @@ export default function ProductCard({ product }: ProductCardProps) {
 		</Link>
 	);
 }
-
 // pinta cada producto
