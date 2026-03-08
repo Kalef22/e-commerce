@@ -1,14 +1,23 @@
+import { Routes, Route } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
-import HomePage from "../features/products/pages/HomePage";
 
-// App es el punto de entrada de la aplicación React.
-// Aquí conectamos el layout principal con las páginas.
-// Aqui se añadira el router
+import HomePage from "../features/products/pages/HomePage";
+import ProductPage from "../features/products/pages/ProductPage";
 
 export default function App() {
-	return (
-		<MainLayout>
-			<HomePage />
-		</MainLayout>
-	);
+  return (
+    <MainLayout>
+      <Routes>
+
+        {/* Página principal */}
+        <Route path="/" element={<HomePage />} />
+
+        {/* Página detalle producto */}
+        <Route path="/products/:slug" element={<ProductPage />} />
+
+      </Routes>
+    </MainLayout>
+  );
 }
+// Routes
+// Es el contenedor de todas las rutas.

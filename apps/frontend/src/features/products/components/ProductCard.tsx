@@ -30,3 +30,5 @@ export default function ProductCard({ product }: ProductCardProps) {
 		</article>
 	);
 }
+
+// pinta cada producto

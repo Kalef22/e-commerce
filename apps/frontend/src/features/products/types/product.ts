@@ -26,5 +26,6 @@ export type ProductsResponse = {
   total: number;
 };
 
+
 // El frontend debe tener claro qué forma tiene la respuesta del backend.
 // Eso evita muchos errores y aprovecha TypeScript de verdad.

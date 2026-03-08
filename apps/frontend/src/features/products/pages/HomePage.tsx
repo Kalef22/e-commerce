@@ -48,3 +48,5 @@ export default function HomePage() {
 		</section>
 	);
 }
+
+// Obtiene productos

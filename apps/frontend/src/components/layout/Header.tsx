@@ -8,4 +8,4 @@ export default function Header() {
   )
 }
 
-// Esto será la cabecera global de la aplicación
+// Esto será la cabecera (navbar) global de la aplicación
