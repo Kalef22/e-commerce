@@ -10,8 +10,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 	return (
 
 		// Link convierte toda la tarjeta en un enlace
-		// product.slug se usa para generar la URL dinámica
-		<Link to={`/products/${product.slug}`} className="product-card">
+		<Link to={`/products/${product.id}`} className="product-card">
 
 			<article>
 

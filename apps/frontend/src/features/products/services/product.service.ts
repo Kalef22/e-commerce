@@ -1,6 +1,5 @@
 // Servicio para hablar con la API
-import type { ProductsResponse } from "../types/product"
-import type { Product } from "../types/product";
+import type { ProductDetail, ProductsResponse } from "../types/product";
 
 const API_URL = "http://localhost:3000/api";
 
@@ -16,13 +15,14 @@ export async function getProducts(): Promise<ProductsResponse> {
   return data;
 }
 
-// Obtiene un producto por slug
-export async function getProductBySlug(slug: string): Promise<Product> {
-	const response = await fetch(`${API_URL}/products/${slug}`);
+// Obtiene un producto por id
+export async function getProductById(id: string): Promise<ProductDetail> {
+	const response = await fetch(`${API_URL}/products/${id}`);
 
 	if (!response.ok) {
 		throw new Error("No se pudo cargar el producto");
 	}
 
-	return response.json();
+	const data: ProductDetail = await response.json();
+	return data;
 }

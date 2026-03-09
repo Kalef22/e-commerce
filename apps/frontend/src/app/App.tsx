@@ -3,6 +3,7 @@ import MainLayout from "../components/layout/MainLayout";
 
 import HomePage from "../features/products/pages/HomePage";
 import ProductPage from "../features/products/pages/ProductPage";
+import CartPage from "../features/cart/pages/CartPage";
 
 export default function App() {
   return (
@@ -13,7 +14,8 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
 
         {/* Página detalle producto */}
-        <Route path="/products/:slug" element={<ProductPage />} />
+        <Route path="/products/:id" element={<ProductPage />} />
+        <Route path="/cart" element={<CartPage />} />
 
       </Routes>
     </MainLayout>

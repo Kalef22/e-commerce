@@ -19,6 +19,21 @@ export type Product = {
   inStock: boolean;
 };
 
+export type ProductDetail = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  mainImage: string;
+  images: string[];
+  basePrice: number;
+  totalStock: number;
+  inStock: boolean;
+  variants: ProductVariant[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ProductsResponse = {
   products: Product[];
   page: number;
